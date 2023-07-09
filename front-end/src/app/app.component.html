@@ -3,10 +3,53 @@
     <ion-title>
       App de Temperatura
     </ion-title>
+    <br>
+    <ion-title>Menu</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-item>
+    <ion-label>Seleccionar filtro:</ion-label>
+    <ion-select placeholder="Seleccionar filtro" [(ngModel)]="selectedFilter">
+      <ion-select-option value="inbox">Inbox</ion-select-option>
+      <ion-select-option value="outbox">Outbox</ion-select-option>
+      <ion-select-option value="favorites">Favoritos</ion-select-option>
+      <ion-select-option value="archives">Archivos</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-item>
+          <ion-icon name="mail" slot="start"></ion-icon>
+          <ion-label>Inbox</ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6">
+        <ion-item>
+          <ion-icon name="paper-plane" slot="start"></ion-icon>
+          <ion-label>Outbox</ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-item>
+          <ion-icon name="heart" slot="start"></ion-icon>
+          <ion-label>Favoritos</ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6">
+        <ion-item>
+          <ion-icon name="archive" slot="start"></ion-icon>
+          <ion-label>Archivos</ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
   <ion-card>
     <ion-card-content>
       <app-temperature-chart></app-temperature-chart>
