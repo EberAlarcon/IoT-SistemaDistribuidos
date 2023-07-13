@@ -1,0 +1,27 @@
+<ion-content>
+  <div class="container">
+    <div class="logo">
+      <!-- Aquí puedes agregar tu propio logo o imagen -->
+      <ion-icon name="lock-open"></ion-icon>
+    </div>
+
+    <div class="form">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+
+      <!-- <ion-button expand="full" routerLink="/dashboard" color="primary">Iniciar sesión</ion-button> -->
+      <ion-button expand="full" (click)="login()" color="primary">Iniciar sesión</ion-button>
+
+     
+
+      
+    </div>
+  </div>
+</ion-content>

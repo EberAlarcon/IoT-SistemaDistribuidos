@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.logo {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+}
+
+.form {
+  width: 80%;
+  max-width: 300px;
+
+  ion-item {
+    margin-bottom: 1rem;
+  }
+
+  ion-button {
+    margin-top: 1rem;
+  }
+}
