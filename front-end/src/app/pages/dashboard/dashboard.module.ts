@@ -8,6 +8,7 @@ import { DashboardPageRoutingModule } from './dashboard-routing.module';
 
 import { DashboardPage } from './dashboard.page';
 import { TemperatureChartComponent } from '../shared/temperature-chart/temperature-chart.component';
+import { HeaderComponent } from '../shared/header/header.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,6 @@ import { TemperatureChartComponent } from '../shared/temperature-chart/temperatu
     IonicModule,
     DashboardPageRoutingModule
   ],
-  declarations: [DashboardPage, TemperatureChartComponent]
+  declarations: [DashboardPage, TemperatureChartComponent, HeaderComponent]
 })
 export class DashboardPageModule {}
