@@ -9,6 +9,7 @@ import { DashboardPageRoutingModule } from './dashboard-routing.module';
 import { DashboardPage } from './dashboard.page';
 import { TemperatureChartComponent } from '../shared/temperature-chart/temperature-chart.component';
 import { HeaderComponent } from '../shared/header/header.component';
+import {MenuComponent} from'../shared/menu/menu.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,6 @@ import { HeaderComponent } from '../shared/header/header.component';
     IonicModule,
     DashboardPageRoutingModule
   ],
-  declarations: [DashboardPage, TemperatureChartComponent, HeaderComponent]
+  declarations: [DashboardPage, TemperatureChartComponent, HeaderComponent,MenuComponent]
 })
 export class DashboardPageModule {}

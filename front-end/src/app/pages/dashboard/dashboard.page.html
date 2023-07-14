@@ -1,53 +1,70 @@
-<app-header title="Dashboard"></app-header>
+<ion-app>
+  <app-menus></app-menus>
+  <div class="ion-page" id="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <app-header title="Dashboard"></app-header>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+
+      <ion-grid [fixed]="true">
+        <ion-row>
+          <ion-col></ion-col>
+          <ion-col>
+            <ion-card-content>
+              <ion-item>
+                
+                <ion-label>Filtar por Fecha:</ion-label>
+                <ion-select [(ngModel)]="filtroFecha" (ionChange)="aplicarFiltro()">
+               
+                  <ion-select-option  value="dia">Día</ion-select-option>
+                  <ion-select-option value="mes">Mes</ion-select-option>
+                  <ion-select-option value="año">Año</ion-select-option>
+                </ion-select>
+                
+              </ion-item>
+            </ion-card-content>
+           
+          </ion-col>
+          <ion-col>
+            <ion-card>
 
 
 
-<ion-content>
-  <ion-item>
-    <ion-label>Seleccionar filtro:</ion-label>
-    <ion-select placeholder="Seleccionar filtro" [(ngModel)]="selectedFilter">
-      <ion-select-option value="inbox">Inbox</ion-select-option>
-      <ion-select-option value="outbox">Outbox</ion-select-option>
-      <ion-select-option value="favorites">Favoritos</ion-select-option>
-      <ion-select-option value="archives">Archivos</ion-select-option>
-    </ion-select>
-  </ion-item>
+              <ion-card-content>
+                <ion-toggle aria-label="Success toggle" color="success" [checked]="true">Encender LED </ion-toggle>
+              </ion-card-content>
+            </ion-card></ion-col>
+        </ion-row>
+      </ion-grid>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6">
-        <ion-item>
-          <ion-icon name="mail" slot="start"></ion-icon>
-          <ion-label>Inbox</ion-label>
-        </ion-item>
-      </ion-col>
-      <ion-col size="6">
-        <ion-item>
-          <ion-icon name="paper-plane" slot="start"></ion-icon>
-          <ion-label>Outbox</ion-label>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="6">
-        <ion-item>
-          <ion-icon name="heart" slot="start"></ion-icon>
-          <ion-label>Favoritos</ion-label>
-        </ion-item>
-      </ion-col>
-      <ion-col size="6">
-        <ion-item>
-          <ion-icon name="archive" slot="start"></ion-icon>
-          <ion-label>Archivos</ion-label>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  
+
+     
+    <ion-grid>
   <ion-card>
-    <ion-card-content>
-      <app-temperature-chart></app-temperature-chart>
-    </ion-card-content>
-  </ion-card>
-  <br>
-</ion-content>
+        <ion-card-content>
+          Grafico de temperatura 1
+          <app-temperature-chart></app-temperature-chart>
+        </ion-card-content>
+        
+      </ion-card>
+      <ion-card>
+     
+        Grafico de Humedad
+        <div style="margin: 20px;">
+         <canvas id="temperatureChart" width="450" height="200"></canvas>
+        </div>
+       
+      </ion-card>
+
+    </ion-grid>
+    
+     
+    </ion-content>
+  </div>
+</ion-app>

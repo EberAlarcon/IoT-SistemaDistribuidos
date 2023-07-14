@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Client } = require('pg');
-
+const cors = require('cors');
 const app = express();
-app.use(bodyParser.json());
+
+app.use(bodyParser.json(),cors());
 
 // Configuración de la conexión a la base de datos PostgreSQL
 const client = new Client({
@@ -24,27 +25,45 @@ client.connect()
   });
 // Ruta para consultar por fecha (día, mes y año)
 app.get('/data', (req, res) => {
-   /// console.log(req.query);
-    const { day, month, year } = req.query;
-    console.log(day);
-    // Consulta a la base de datos por fecha
-    const query = `
-    SELECT *
-    FROM prueba
-    WHERE fecha::date = $1;
+  const { day, month, year } = req.query;
+  
+  // Lógica de construcción de la fecha
+  let dateFilter = '';
+  let values = [];
+
+  if (day && month && year) {
+    // Filtro por día, mes y año
+    dateFilter = 'fecha::date = $1';
+    values = [`${year}-${month}-${day}`];
+  } else if (month && year) {
+    // Filtro por mes y año
+    dateFilter = 'extract(month from fecha) = $1 AND extract(year from fecha) = $2';
+    values = [month, year];
+  } else if (year) {
+    // Filtro por año
+    dateFilter = 'extract(year from fecha) = $1';
+    values = [year];
+  } else {
+    // No se proporcionaron suficientes parámetros de fecha
+    return res.status(400).json({ error: 'Parámetros de fecha incorrectos' });
+  }
+
+  // Consulta a la base de datos
+  const query = `
+    SELECT temperatura, humedad, fecha
+    FROM sensor
+    WHERE ${dateFilter};
   `;
-  
-  const values = [`${day}`]; // Format the date as 'YYYY-MM-DD'
-  
+
   client.query(query, values)
-      .then((result) => {
-        res.json(result.rows);
-      })
-      .catch((error) => {
-        console.error('Error al consultar la base de datos:', error);
-        res.status(500).json({ error: 'Error al consultar la base de datos' });
-      });
-  });
+    .then((result) => {
+      res.json(result.rows);
+    })
+    .catch((error) => {
+      console.error('Error al consultar la base de datos:', error);
+      res.status(500).json({ error: 'Error al consultar la base de datos' });
+    });
+});
 
 // Ruta para apagar el LED
 app.put('/led', (req, res) => {
