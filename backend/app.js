@@ -64,6 +64,36 @@ app.get('/data', (req, res) => {
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     });
 });
+// Ruta para validar el usuario y la contraseña
+app.post('/login', (req, res) => {
+  const { email, contraseña } = req.body;
+console.log(email);
+console.log(contraseña);
+  // Consulta a la base de datos para obtener el usuario
+  const query = `
+    SELECT  *
+    FROM usuarios
+    WHERE email = $1 AND contraseña = $2;
+  `;
+
+  const values = [email, contraseña];
+
+  // Ejecutar la consulta y manejar los resultados
+  client.query(query, values)
+    .then((result) => {
+      // Verificar si se encontró un usuario con las credenciales proporcionadas
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        res.json({ message: 'Inicio de sesión exitoso', user });
+      } else {
+        res.status(401).json({ error: 'Credenciales inválidas' });
+      }
+    })
+    .catch((error) => {
+      console.error('Error al consultar la base de datos:', error);
+      res.status(500).json({ error: 'Error al consultar la base de datos' });
+    });
+});
 
 // Ruta para apagar el LED
 app.put('/led', (req, res) => {
