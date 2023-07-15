@@ -1,0 +1,97 @@
+<ion-app>
+  <ion-menu contentId="main-content">
+    <ion-header>
+      <ion-toolbar color="tertiary">
+        
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item>
+          <ion-label><a style="text-decoration: none" href="dashboard">Historico</a></ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label><a style="text-decoration: none" href="time-real">En vivo</a></ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label><a  style="text-decoration: none" href="/">Cerrar Sesion</a></ion-label>
+        </ion-item>
+
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <div class="ion-page" id="main-content">
+    <ion-header>
+
+
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title class="custom-title">
+          <div  class="app-name">IoT Sistema Temperatura-Humedad </div>
+          <strong>Live <ion-icon name="partly-sunny-outline"></ion-icon></strong>
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+
+      <ion-grid [fixed]="true">
+        <ion-row>
+          <ion-col></ion-col>
+          <ion-col>
+            <ion-card-content>
+              <ion-item>
+                
+                <ion-label>Filtar por Fecha:</ion-label>
+                <ion-select [(ngModel)]="filtroFecha" (ionChange)="aplicarFiltro()">
+               
+                  <ion-select-option  value="dia">Día</ion-select-option>
+                  <ion-select-option value="mes">Mes</ion-select-option>
+                  <ion-select-option value="año">Año</ion-select-option>
+                </ion-select>
+                
+              </ion-item>
+            </ion-card-content>
+           
+          </ion-col>
+          <ion-col>
+            <ion-card>
+
+
+
+              <ion-card-content>
+                <ion-toggle aria-label="Success toggle" color="success" [checked]="true">Encender LED </ion-toggle>
+              </ion-card-content>
+            </ion-card></ion-col>
+        </ion-row>
+      </ion-grid>
+
+
+     
+    <ion-grid>
+  <ion-card>
+        <ion-card-content>
+          Grafico de temperatura 1
+          <div style="margin: 20px;">
+            <canvas id="temperatureChart2" width="450" height="200"></canvas>
+           </div>
+        </ion-card-content>
+        
+      </ion-card>
+      <ion-card>
+     
+        Grafico de Humedad
+        <div style="margin: 20px;">
+         <canvas id="temperatureChart" width="450" height="200"></canvas>
+        </div>
+       
+      </ion-card>
+
+    </ion-grid>
+    
+     
+    </ion-content>
+  </div>
+</ion-app>

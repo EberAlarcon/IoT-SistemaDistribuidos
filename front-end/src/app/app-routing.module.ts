@@ -15,6 +15,10 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule)
   },
+  {
+    path: 'time-real',
+    loadChildren: () => import('./pages/time-real/time-real.module').then( m => m.TimeRealPageModule)
+  }
 
 
 ];
