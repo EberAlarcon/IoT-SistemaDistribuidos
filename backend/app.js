@@ -1,11 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mqttRouter = require('./routes/mqtt');
 const { Client } = require('pg');
 const cors = require('cors');
 const app = express();
+const http = require('http').createServer(app); // Importa http
+const socketIO = require('socket.io');
 
-app.use(bodyParser.json(),cors());
-
+// Crear el servidor de Socket.IO
+const io = socketIO(http, {
+  cors: {
+    origin: "http://localhost:8100",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
+});
+app.use(bodyParser.json());
+app.use(cors()); // Habilita el CORS en todas las rutas
 // Configuración de la conexión a la base de datos PostgreSQL
 const client = new Client({
   host: 'containers-us-west-143.railway.app',
@@ -23,6 +35,22 @@ client.connect()
   .catch((error) => {
     console.error('Error al conectar a la base de datos:', error);
   });
+
+// Configura la conexión con socket.io
+io.on('connection', (socket) => {
+  console.log('Un cliente se ha conectado');
+
+  // Escucha el evento 'mqtt_message' desde el cliente Angular
+  socket.on('mqtt_message', (data) => {
+    console.log('Mensaje MQTT recibido desde el cliente:', data);
+    // Aquí puedes realizar acciones con los datos recibidos desde el cliente Angular
+  });
+});
+
+// Middleware para la ruta '/line'
+app.use('/line', mqttRouter(io)); // Pasa la instancia de io al middleware
+
+
 // Ruta para consultar por fecha (día, mes y año)
 app.get('/data', (req, res) => {
   const { day, month, year } = req.query;
@@ -110,13 +138,7 @@ app.put('/led', (req, res) => {
   }
 });
 
-// Manejador de errores
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Error en el servidor' });
-});
-
 // Inicia el servidor en el puerto 3000
-app.listen(3000, () => {
+http.listen(3000, () => {
   console.log('Servidor iniciado en http://localhost:3000');
 });

@@ -41,19 +41,7 @@
         <ion-row>
           <ion-col></ion-col>
           <ion-col>
-            <ion-card-content>
-              <ion-item>
-                
-                <ion-label>Filtar por Fecha:</ion-label>
-                <ion-select [(ngModel)]="filtroFecha" (ionChange)="aplicarFiltro()">
-               
-                  <ion-select-option  value="dia">Día</ion-select-option>
-                  <ion-select-option value="mes">Mes</ion-select-option>
-                  <ion-select-option value="año">Año</ion-select-option>
-                </ion-select>
-                
-              </ion-item>
-            </ion-card-content>
+          
            
           </ion-col>
           <ion-col>
@@ -73,7 +61,7 @@
     <ion-grid>
   <ion-card>
         <ion-card-content>
-          Grafico de temperatura 1
+          Grafico de temperatura 
           <div style="margin: 20px;">
             <canvas id="temperatureChart2" width="450" height="200"></canvas>
            </div>
