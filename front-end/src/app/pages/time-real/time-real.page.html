@@ -50,7 +50,11 @@
 
 
               <ion-card-content>
-                <ion-toggle aria-label="Success toggle" color="success" [checked]="true">Encender LED </ion-toggle>
+                <ion-item>
+                  <ion-label>Encender LED</ion-label>
+                  <ion-toggle [(ngModel)]="isLedOn" color="success" (ionChange)="toggleLed()"></ion-toggle>
+                </ion-item>
+              
               </ion-card-content>
             </ion-card></ion-col>
         </ion-row>

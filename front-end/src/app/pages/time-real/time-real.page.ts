@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MenuComponent } from '../shared/menu/menu.component';
 import { ApiService } from './../../services/ApiService';
 import { HttpClient } from '@angular/common/http'; // Importa HttpClient
-import { io } from 'socket.io-client';
+import { io,Socket  } from 'socket.io-client';
+
 import { Chart, registerables } from 'chart.js';
+
 @Component({
   selector: 'app-time-real',
   templateUrl: './time-real.page.html',
@@ -18,7 +20,7 @@ export class TimeRealPage implements OnInit {
   humedades: number[] = [];
   fechas: string[] = [];
   maxDataPoints = 50;
-
+  isLedOn = false;
   constructor(private apiService: ApiService, private http: HttpClient) {
     Chart.register(...registerables);
   } // Inyecta HttpClient
@@ -40,9 +42,9 @@ export class TimeRealPage implements OnInit {
       const parsedData = JSON.parse(data);
 
   // Ahora puedes acceder a las propiedades del objeto
-  const TEMPERATURA = parsedData.TEMPERATURA;
-  const HUMEDAD = parsedData.HUMEDAD;
-  const FECHA = parsedData.FECHA;
+  const TEMPERATURA = parsedData.temperatura;
+  const HUMEDAD = parsedData.humedad;
+  const FECHA = parsedData.timestamp;
 
   console.log(TEMPERATURA, HUMEDAD, FECHA);
       // Aquí puedes realizar acciones con los datos recibidos desde el servidor
@@ -68,6 +70,27 @@ export class TimeRealPage implements OnInit {
   // Por ejemplo, puedes llamar a una función para actualizar la gráfica
   this.actualizarGrafica();
     });
+  }
+  toggleLed() {
+    const estado = this.isLedOn ? 'True' : 'False';
+     // Establecer conexión con el servidor WebSocket
+     const url = 'http://localhost:3000/line/send-message';
+     const body = { message: estado };
+ 
+     this.http.post(url, body).subscribe(
+       (response) => {
+         console.log('Mensaje enviado correctamente:', response);
+         // Realiza aquí cualquier acción que necesites después de enviar el mensaje.
+       },
+       (error) => {
+         console.error('Error al enviar el mensaje:', error);
+         // Maneja aquí el error si es necesario.
+       }
+     );
+    console.log('Enviando estado del LED:', estado);
+   //socket.publish('hogar/cocina/luz/state', estado, { qos: 1, retain: true });
+    
+   // this.mqttClient.publish('hogar/cocina/luz/state', estado, { qos: 1, retain: true });
   }
   actualizarGrafica() {
     // Aquí actualizas la gráfica con los datos almacenados en los arrays

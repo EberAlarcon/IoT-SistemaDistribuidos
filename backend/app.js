@@ -49,6 +49,7 @@ io.on('connection', (socket) => {
 
 // Middleware para la ruta '/line'
 app.use('/line', mqttRouter(io)); // Pasa la instancia de io al middleware
+//app.use(socketIoMiddleware(io));
 
 
 // Ruta para consultar por fecha (día, mes y año)

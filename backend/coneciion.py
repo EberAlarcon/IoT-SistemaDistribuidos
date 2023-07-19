@@ -1,35 +1,21 @@
+import ujson as json
 from mqtt_as import config
 from mqtt_as import MQTTClient
+from machine import Pin, SoftI2C
+import ahtx0
+import postgresql
 
-# Other imports...
-
-import umongo
-
-# MongoDB connection URI
-MONGO_URI = "mongodb+srv://josereyes0215:Teodolinda15@cluster0.frhsy.mongodb.net/?retryWrites=true&w=majority"
-
-# Define MongoDB document model
-@umongo.instance.register
-class SensorData(umongo.Document):
-    temperatura = umongo.FloatField()
-    humedad = umongo.FloatField()
-    sensor = umongo.StrField()
-    latitud = umongo.FloatField()
-    longitud = umongo.FloatField()
-    timestamp = umongo.IntField()
-
-ledRed = machine.Pin(16, machine.Pin.OUT)
+ledRed = Pin(16, Pin.OUT)
 i2c = SoftI2C(scl=Pin(5), sda=Pin(4), freq=100000)
 sensor = ahtx0.AHT20(i2c)
 
-config['ssid'] = '.:Wifi-Uleam:.'
-config['wifi_pw'] = 'U13aM.2022'
+config['ssid'] = 'FAMILIA REYES'
+config['wifi_pw'] = 'Burbuja2001'
 
 # MQTT configuration...
-config['server'] = 'rat.rmq2.cloudamqp.com'  # Change to suit e.g. 'iot.eclipse.org'
+config['server'] = 'rat.rmq2.cloudamqp.com'
 config['user'] = 'scecckcu:scecckcu'
 config['password'] = 'UBQj1gLTSh-3NucCEbg-i5WhHLvtOiKA'
-
 
 TOPIC1 = 'uleam/fcvt/grupo6'
 TopicState = "hogar/cocina/luz/state"
@@ -52,6 +38,7 @@ def mTimeStamp():
     mTimeStamp = 946684800 + TimeSeconds
     return mTimeStamp
 
+
 def querymessage(nombre):
     latitud = -0.955748 # Manta
     longitud = -80.701301 # Manta
@@ -73,8 +60,9 @@ def querymessage(nombre):
         "sensor":nombre,
         "latitud":latitud,
         "longitud":longitud,
-        "timestamp":mTimeStamp()}
+        "fecha":mTimeStamp()}
     return message
+
 def callback(topic, msg, retained):
     activaLed(topic, msg)
     print('[Consumidor-Micro] TOPIC: {}; Mensaje: {}'.format(topic, msg))
@@ -87,20 +75,40 @@ def callback(topic, msg, retained):
     }
     asyncio.create_task(save_mqtt_data(data))
 
-async def save_sensor_data(data):
-    sensor_data = SensorData(**data)
-    await sensor_data.commit()
 
-async def save_mqtt_data(data):
-    mqtt_data = MqttData(**data)
-    await mqtt_data.commit()
+async def save_sensor_data(data):
+    # Conectarse a la base de datos PostgreSQL
+# PostgreSQL configuration
+
+    db = postgresql.open(
+        host= 'containers-us-west-143.railway.app',
+        port=7040,
+        user="postgres",
+        password="RB40eSXKi92UBpCSqtPP",
+        database="railway"
+    )
+
+    # Preparar la sentencia de inserción
+    make_sensor_data = db.prepare("INSERT INTO sensor (temperatura, humedad, sensor, latitud, longitud, timestamp) VALUES ($1, $2, $3, $4, $5, $6)")
+
+    # Insertar el registro en la tabla
+    make_sensor_data(
+        data["temperatura"],
+        data["humedad"],
+        data["sensor"],
+        data["latitud"],
+        data["longitud"],
+        data["fecha"]
+    )
+
+    # Cerrar la conexión
+    db.close()
 
 async def conn_han(client):
-    await client.subscribe(TOPIC1, 1)
-    await client.subscribe(TopicState, 1)
-    await client.subscribe(TopicData, 1)
+    # Resto del código (igual que antes) ...
 
 async def main(client):
+    # Resto del código (igual que antes) ...
     await client.connect()
     while True:
         await asyncio.sleep(5)
@@ -115,29 +123,44 @@ async def main(client):
         pixels.write()
         print('Mensaje publicado')
 
-        # Save sensor data to MongoDB
+
+        # Save sensor data to PostgreSQL
         sensor_data = querymessage("WZM")
         await save_sensor_data(sensor_data)
 
-        # Query data from MongoDB and publish to MQTT
-        mqtt_data = await MqttData.find().to_list(length=None)
-        for data in mqtt_data:
-            await client.publish(TopicData, data.message, qos=1)
+        # Query data from PostgreSQL and publish to MQTT
+        # Conectarse a la base de datos PostgreSQL
+        db = postgresql.open(
+           host= 'containers-us-west-143.railway.app',
+        port=7040,
+        user="postgres",
+        password="RB40eSXKi92UBpCSqtPP",
+        database="railway"
+        )
+
+        # Realizar una consulta SQL y publicar datos en MQTT
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM sensor")
+        rows = cursor.fetchall()
+        for row in rows:
+            data = {
+                "temperatura": row[0],
+                "humedad": row[1],
+                "sensor": row[2],
+                "latitud": row[3],
+                "longitud": row[4],
+                "fecha": row[5]
+            }
+            message = json.dumps(data)
+            await client.publish(TopicData, message, qos=1)
+
+        # Cerrar la conexión
+        db.close()
 
 config['subs_cb'] = callback
 config['connect_coro'] = conn_han
 MQTTClient.DEBUG = True
 client = MQTTClient(config)
-
-# MongoDB client setup
-mongo_client = umongo.MongoClient(
-    MONGO_URI,
-    io_loop=asyncio.get_event_loop()
-)
-db = mongo_client.db
-
-# Set the collection to "sensor"
-SensorData = db.sensor
 
 try:
     asyncio.run(main(client))
