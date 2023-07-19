@@ -21,10 +21,10 @@ date= [];
   year = this.dates.getFullYear();
 filtroFecha: string | undefined='dia';
  urlParams = `?day=${this.day}&month=${this.month}&year=${this.year}`;
-aplicarFiltro() {
- 
+ isLedOn = false;
 
- if (this.filtroFecha === 'dia') {
+ aplicarFiltro() {
+  if (this.filtroFecha === 'dia') {
     const date = new Date();
     const day = date.getDate();
     const month = date.getMonth() + 1;
@@ -39,10 +39,15 @@ aplicarFiltro() {
     const date = new Date();
     const year = date.getFullYear();
     this.urlParams = `?year=${year}`;
+  } else if (this.filtroFecha === 'hora') {
+    const date = new Date();
+    const hour = date.toISOString().slice(11, 13); // Obtener la hora (dos dígitos) desde el índice 11 al 13 de la cadena ISO
+    this.urlParams = `?hour=${hour}`;
   }
-  this.ngOnInit()
-
+  this.ngOnInit();
 }
+
+
 async getData(urlParams:any) {
   console.log(urlParams);
   
@@ -57,10 +62,30 @@ async getData(urlParams:any) {
   
 
 
-}   constructor() {
+}   constructor( private http: HttpClient) {
   Chart.register(...registerables);
 }
+toggleLed() {
+  const estado = this.isLedOn ? 'True' : 'False';
+   // Establecer conexión con el servidor WebSocket
+   const url = 'http://localhost:3000/line/send-message';
+   const body = { message: estado };
 
+   this.http.post(url, body).subscribe(
+     (response) => {
+       console.log('Mensaje enviado correctamente:', response);
+       // Realiza aquí cualquier acción que necesites después de enviar el mensaje.
+     },
+     (error) => {
+       console.error('Error al enviar el mensaje:', error);
+       // Maneja aquí el error si es necesario.
+     }
+   );
+  console.log('Enviando estado del LED:', estado);
+ //socket.publish('hogar/cocina/luz/state', estado, { qos: 1, retain: true });
+  
+ // this.mqttClient.publish('hogar/cocina/luz/state', estado, { qos: 1, retain: true });
+}
 ngOnInit() {
 
   this.getData(this.urlParams).then(() => {

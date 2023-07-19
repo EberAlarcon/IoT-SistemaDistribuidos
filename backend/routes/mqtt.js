@@ -38,21 +38,23 @@ client.on('message', (topic, message) => {
   const { temperatura, humedad, sensor, latitud, longitud, timestamp } = data;
 
   const fecha = new Date(timestamp * 1000);
-
-  // Obtener los componentes de la fecha
   const year = fecha.getFullYear();
-  const month = String(fecha.getMonth() + 1).padStart(2, '0');
-  const day = String(fecha.getDate()).padStart(2, '0');
+  const month = fecha.getMonth() + 1;
+  const day = fecha.getDate();
+  const hours = fecha.getHours();
+  const minutes = fecha.getMinutes();
+  const seconds = fecha.getSeconds();
   
-  // Formatear la fecha como una cadena en el formato deseado (por ejemplo, "YYYY-MM-DD HH:mm:ss")
-  const fechaFormateada = `${year}-${month}-${day}`;
+  const fechaFormateada = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+console.log(timestamp);
 
   const query = `
     INSERT INTO sensor (temperatura, humedad, sensor, latitud, longitud, fecha)
     VALUES ($1, $2, $3, $4, $5, $6)
   `;
 
-  const values = [temperatura, humedad, sensor, latitud, longitud, fechaFormateada];
+  const values = [temperatura, humedad, sensor, latitud, longitud, timestamp];
 
   pool.query(query, values)
     .then(() => {

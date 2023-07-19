@@ -21,7 +21,9 @@
                 
                 <ion-label>Filtar por Fecha:</ion-label>
                 <ion-select [(ngModel)]="filtroFecha" (ionChange)="aplicarFiltro()">
-               
+                      <!--
+                         <ion-select-option  value="hora">Hora</ion-select-option>
+                      -->  
                   <ion-select-option  value="dia">Día</ion-select-option>
                   <ion-select-option value="mes">Mes</ion-select-option>
                   <ion-select-option value="año">Año</ion-select-option>
@@ -37,7 +39,11 @@
 
 
               <ion-card-content>
-                <ion-toggle aria-label="Success toggle" color="success" [checked]="true">Encender LED </ion-toggle>
+                <ion-item>
+                  <ion-label>Encender LED</ion-label>
+                  <ion-toggle [(ngModel)]="isLedOn" color="success" (ionChange)="toggleLed()"></ion-toggle>
+                </ion-item>
+              
               </ion-card-content>
             </ion-card></ion-col>
         </ion-row>

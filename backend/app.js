@@ -52,29 +52,40 @@ app.use('/line', mqttRouter(io)); // Pasa la instancia de io al middleware
 //app.use(socketIoMiddleware(io));
 
 
-// Ruta para consultar por fecha (día, mes y año)
 app.get('/data', (req, res) => {
-  const { day, month, year } = req.query;
+  const { day, month, year, hour } = req.query;
   
-  // Lógica de construcción de la fecha
+  // Lógica de construcción de la fecha y hora
   let dateFilter = '';
   let values = [];
 
-  if (day && month && year) {
-    // Filtro por día, mes y año
+  if (day && month && year && hour) {
+    // Filtro por día, mes, año y hora
+    dateFilter = 'fecha::date = $1 AND extract(hour from fecha) = $2';
+    values = [`${year}-${month}-${day}`, hour];
+  } else if (day && month && year) {
+    // Filtro por día, mes y año (sin hora)
     dateFilter = 'fecha::date = $1';
     values = [`${year}-${month}-${day}`];
+  } else if (month && year && hour) {
+    // Filtro por mes, año y hora
+    dateFilter = 'extract(month from fecha) = $1 AND extract(year from fecha) = $2 AND extract(hour from fecha) = $3';
+    values = [month, year, hour];
   } else if (month && year) {
-    // Filtro por mes y año
+    // Filtro por mes y año (sin hora)
     dateFilter = 'extract(month from fecha) = $1 AND extract(year from fecha) = $2';
     values = [month, year];
+  } else if (year && hour) {
+    // Filtro por año y hora
+    dateFilter = 'extract(year from fecha) = $1 AND extract(hour from fecha) = $2';
+    values = [year, hour];
   } else if (year) {
-    // Filtro por año
+    // Filtro por año (sin hora)
     dateFilter = 'extract(year from fecha) = $1';
     values = [year];
   } else {
-    // No se proporcionaron suficientes parámetros de fecha
-    return res.status(400).json({ error: 'Parámetros de fecha incorrectos' });
+    // No se proporcionaron suficientes parámetros de fecha y hora
+    return res.status(400).json({ error: 'Parámetros de fecha y hora incorrectos' });
   }
 
   // Consulta a la base de datos
@@ -93,6 +104,7 @@ app.get('/data', (req, res) => {
       res.status(500).json({ error: 'Error al consultar la base de datos' });
     });
 });
+
 // Ruta para validar el usuario y la contraseña
 app.post('/login', (req, res) => {
   const { email, contraseña } = req.body;
