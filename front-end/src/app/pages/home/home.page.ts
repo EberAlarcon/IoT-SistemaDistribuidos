@@ -19,7 +19,7 @@ export class HomePage {
       contraseña: this.password
     };
     // Simplemente redireccionamos a una página de inicio después del inicio de sesión exitoso
-    axios.post('http://localhost:3000/login', userData)
+    axios.post('https://backend-iotic.vercel.app/login', userData)
       .then(response => {
         // Manejar la respuesta exitosa aquí
         console.log(response.data);

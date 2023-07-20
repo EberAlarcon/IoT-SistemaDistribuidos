@@ -35,7 +35,7 @@ export class TimeRealPage implements OnInit {
     });
 
     // Establecer conexión con el servidor WebSocket
-    const socket = io('http://localhost:3000'); // Reemplaza la URL con tu dirección de servidor WebSocket
+    const socket = io('https://backend-iotic.vercel.app'); // Reemplaza la URL con tu dirección de servidor WebSocket
 
     // Escuchar el evento 'mqtt_message' desde el servidor
     socket.on('mqtt_message', (data: any) => {
@@ -74,7 +74,7 @@ export class TimeRealPage implements OnInit {
   toggleLed() {
     const estado = this.isLedOn ? 'True' : 'False';
      // Establecer conexión con el servidor WebSocket
-     const url = 'http://localhost:3000/line/send-message';
+     const url = 'https://backend-iotic.vercel.app/line/send-message';
      const body = { message: estado };
  
      this.http.post(url, body).subscribe(

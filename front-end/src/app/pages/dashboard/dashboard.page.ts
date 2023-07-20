@@ -51,7 +51,7 @@ filtroFecha: string | undefined='dia';
 async getData(urlParams:any) {
   console.log(urlParams);
   
-  const resp = await fetch(`http://localhost:3000/data${urlParams}`);
+  const resp = await fetch(`https://backend-iotic.vercel.app/data${urlParams}`);
 
   const data = await resp.json();
   this.temperaturas = data.map((item: any) => Number(item.temperatura));
@@ -68,7 +68,7 @@ async getData(urlParams:any) {
 toggleLed() {
   const estado = this.isLedOn ? 'True' : 'False';
    // Establecer conexión con el servidor WebSocket
-   const url = 'http://localhost:3000/line/send-message';
+   const url = 'https://backend-iotic.vercel.app/line/send-message';
    const body = { message: estado };
 
    this.http.post(url, body).subscribe(

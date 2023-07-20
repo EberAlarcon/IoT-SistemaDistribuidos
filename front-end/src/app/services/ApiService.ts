@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:3000/line';
+  private apiUrl = 'https://backend-iotic.vercel.app/line';
 
   constructor(private http: HttpClient) { }
 
